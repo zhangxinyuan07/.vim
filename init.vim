@@ -251,7 +251,7 @@ nnoremap ; :
 " Initial Plugin 加载插件
 "==========================================
 
-call plug#begin()
+call plug#begin('~/.config/nvim/plugged/')
 
 Plug 'mhinz/vim-startify'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
