@@ -239,6 +239,8 @@ map <Down> <Nop>
 
 nnoremap <leader>v <C-v>
 nnoremap ; :
+vnoremap <leader>y "+y
+nnoremap <leader>p "*p
 
 "==========================================
 " Initial Plugin 加载插件
