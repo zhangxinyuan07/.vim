@@ -8,6 +8,12 @@ silent function! WINDOWS()
     return  (has('win32') || has('win64'))
 endfunction
 
+" On Windows, also use '.vim' instead of 'vimfiles'; this makes synchronization
+" across (heterogeneous) systems easier.
+if WINDOWS()
+    set runtimepath=$HOME/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOME/.vim/after
+endif
+
 let mapleader=" " " 设置<LEADER>键为空格
 
 set nocompatible 
