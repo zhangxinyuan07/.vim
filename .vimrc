@@ -332,15 +332,13 @@ let g:mkdp_preview_options = {
     \ }
 
 function g:OpenBrowserInANewWindow(url)
-    if WINDOWS()
-        let chrome_path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
-    elseif LINUX()
-        let chrome_path = chrome
-    endif
+    let chrome_path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
     silent execute 'silent !"' . chrome_path . '" --new-window ' . a:url
 endfunction
 
-let g:mkdp_browserfunc = 'g:OpenBrowserInANewWindow'
+if WINDOWS()
+    let g:mkdp_browserfunc = 'g:OpenBrowserInANewWindow'
+endif
 autocmd FileType markdown nmap <F8> <Plug>MarkdownPreview
 
 
