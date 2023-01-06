@@ -148,8 +148,7 @@ function! NumberToggle()
 endfunc
 nnoremap <C-n> :call NumberToggle()<cr>
 
-set splitbelow
-set splitright
+set splitbelow splitright
 
 set wrapscan               " Searches wrap around end-of-file.
 set report      =0         " Always report changed lines.
@@ -189,16 +188,13 @@ set ffs=unix,dos,mac
 "==========================================
 
 set backup
-set backupdir   =$HOME/.local/share/nvim/backup//
+set backupdir   =$HOME/.vim/files/backup//
 set backupext   =-vimbackup
 set backupskip  =
-set directory   =$HOME/.local/share/nvim/swap//
+set directory   =$HOME/.vim/files/swap//
 set updatecount =100
 set undofile
-set undodir     =$HOME/.local/share/nvim/undo//
-
-" vimrc文件修改之后自动加载, linux
-autocmd! bufwritepost .vimrc source %
+set undodir     =$HOME/.vim/files/undo//
 
 " 自动补全配置
 " 让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
@@ -241,6 +237,16 @@ nnoremap <leader>v <C-v>
 nnoremap ; :
 vnoremap <leader>y "+y
 nnoremap <leader>p "*p
+
+cmap w!! w !sudo tee % > /dev/null <CR>
+
+iab #i #include
+iab #d #define
+iab #p #pragma
+
+inoremap jj <Esc>
+" Ctrl-l 取消高亮,更新diff,刷新屏幕
+nnoremap <silent> <C-l> :<C-U>nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:Beacon<cr>
 
 "==========================================
 " Initial Plugin 加载插件
