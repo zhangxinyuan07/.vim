@@ -250,7 +250,6 @@ iab #i #include
 iab #d #define
 iab #p #pragma
 
-inoremap jj <Esc>
 " Ctrl-l 取消高亮,更新diff,刷新屏幕
 nnoremap <silent> <C-l> :<C-U>nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:Beacon<cr>
 
@@ -292,7 +291,7 @@ call plug#end()
 " Color & Themey 颜色和主题设置
 "==========================================
  if has('gui_running')
-    set lines=40 columns=100
+    set lines=50 columns=120
     set guioptions=
     if LINUX()
         set guifont=Fira\ Code\ Medium\12\500
