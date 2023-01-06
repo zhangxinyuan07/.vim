@@ -256,8 +256,6 @@ call plug#begin()
 Plug 'mhinz/vim-startify'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'morhetz/gruvbox'
 Plug 'gcmt/wildfire.vim'
 Plug 'tpope/vim-surround'
@@ -286,22 +284,20 @@ call plug#end()
 "==========================================
 " Color & Themey 颜色和主题设置
 "==========================================
- if has('gui_running')
-    if has("win16") || has("win32") || has("win95") || has("win64")
+ if has('gui')
+    set lines=40 columns=100 linespace=0
+    set guioptions=gmlr
+    if has('win')
         set guifont=Fira_Code_Medium:h12:W500:cANSI:qDRAFT
     else
         set guifont=Fira\ Code\ Medium\12\500
     endif
-endif
-
-set guifont=Fira_Code:h12:W500:cANSI:qDRAFT
-
-color gruvbox
-set background=dark
-" Enable 256 colors palette in Gnome Terminal
-if $COLORTERM == 'gnome-terminal'
+else 
     set t_Co=256
 endif
+
+set background=dark
+colorscheme gruvbox
 
 
 "==========================================
@@ -348,40 +344,6 @@ map <C-n> :NERDTreeToggle<CR>
 " 自动括号插件设置
 au Filetype FILETYPE let b:AutoPairs = {"(": ")"}
 au FileType php      let b:AutoPairs = AutoPairsDefine({'<?' : '?>', '<?php': '?>'})
-
-" airline设置
-let g:airline_powerline_fonts = 1  " 支持 powerline 字体
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='murmur'  " murmur配色不错
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.crypt = '🔒'
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.maxlinenr = '㏑'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.spell = 'Ꞩ'
-let g:airline_symbols.notexists = 'Ɇ'
-let g:airline_symbols.whitespace = 'Ξ'
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.maxlinenr = ''
 
  "youdao translater
 vnoremap <silent> <C-T> :<C-u>Ydv<CR>
