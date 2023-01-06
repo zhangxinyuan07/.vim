@@ -192,15 +192,28 @@ set ffs=unix,dos,mac
 "==========================================
 " others 其它设置
 "==========================================
+function! EnsureDirExists (dir)
+  if !isdirectory(a:dir)
+    if exists("*mkdir")
+      call mkdir(a:dir,'p')
+      echo"Created directory:" . a:dir
+    else
+      echo"Please create directory:" . a:dir
+    endif
+  endif
+endfunction
 
+call EnsureDirExists($HOME . '.vim/fiels/backup/')
+call EnsureDirExists($HOME . '.vim/fiels/swap/')
+call EnsureDirExists($HOME . '.vim/fiels/undo/')
 set backup
-set backupdir   =$HOME/.vim/files/backup//
+set backupdir   =$HOME/.vim/files/backup/
 set backupext   =-vimbackup
 set backupskip  =
-set directory   =$HOME/.vim/files/swap//
+set directory   =$HOME/.vim/files/swap/
 set updatecount =100
 set undofile
-set undodir     =$HOME/.vim/files/undo//
+set undodir     =$HOME/.vim/files/undo/
 
 " 自动补全配置
 " 让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
@@ -336,8 +349,10 @@ function g:OpenBrowserInANewWindow(url)
         let chrome_path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
     elseif LINUX()
         let chrome_path = chrome
+    endif
     silent execute 'silent !"' . chrome_path . '" --new-window ' . a:url
 endfunction
+
 let g:mkdp_browserfunc = 'g:OpenBrowserInANewWindow'
 autocmd FileType markdown nmap <F8> <Plug>MarkdownPreview
 
