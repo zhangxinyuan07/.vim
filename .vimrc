@@ -293,7 +293,7 @@ call plug#end()
 "==========================================
  if has('gui_running')
     set lines=40 columns=100
-    set guioptions-=T " Remove the toolbar
+    set guioptions=gmlr
     if LINUX()
         set guifont=Fira\ Code\ Medium\12\500
     elseif WINDOWS()
