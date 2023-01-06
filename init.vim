@@ -274,7 +274,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'godlygeek/tabular' "必要插件，安装在vim-markdown前面
 Plug 'plasticboy/vim-markdown'
 Plug 'mzlogin/vim-markdown-toc'
-Plug 'iamcco/markdown-preview.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 'markdown'}
 
 " Undo Tree
 Plug 'mbbill/undotree/'
@@ -286,7 +286,16 @@ call plug#end()
 "==========================================
 " Color & Themey 颜色和主题设置
 "==========================================
-set guifont=Fira\ Code\ Medium\12\500
+ if has('gui_running')
+    if has("win16") || has("win32") || has("win95") || has("win64")
+        set guifont=Fira_Code_Medium:h12:W500:cANSI:qDRAFT
+    else
+        set guifont=Fira\ Code\ Medium\12\500
+    endif
+endif
+
+set guifont=Fira_Code:h12:W500:cANSI:qDRAFT
+
 color gruvbox
 set background=dark
 " Enable 256 colors palette in Gnome Terminal
