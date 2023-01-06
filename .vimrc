@@ -1,3 +1,13 @@
+silent function! OSX()
+    return has('macunix')
+endfunction
+silent function! LINUX()
+    return has('unix') && !has('macunix') && !has('win32unix')
+endfunction
+silent function! WINDOWS()
+    return  (has('win32') || has('win64'))
+endfunction
+
 let mapleader=" " " 设置<LEADER>键为空格
 
 set nocompatible 
@@ -20,30 +30,15 @@ syntax on
 " history存储容量
 set history=2000
 
-" 文件修改之后自动载入
-set autoread
-" 启动的时候不显示那个援助乌干达儿童的提示
-set shortmess=atI
-
 " 突出显示当前列
 set cursorcolumn
 " 突出显示当前行
 set cursorline
 
-" 设置 退出vim后，内容显示在终端屏幕, 可以用于查看和复制, 不需要可以去掉
-" 好处：误删什么的，如果以前屏幕打开，可以找回
-set t_ti= t_te=
-
-" 鼠标暂不启用, 键盘党....
 set mouse-=a
 
 " change the terminal's title
 set title
-" 去掉输入错误的提示声音
-set novisualbell
-set noerrorbells
-set t_vb=
-set tm=500
 
 "==========================================
 " Display Settings 展示/排版等界面格式设置
@@ -243,8 +238,6 @@ map <Up> <Nop>
 map <Down> <Nop>
 
 nnoremap <leader>v <C-v>
-
-" Map ; to : and save a million keystrokes 用于快速进入命令行
 nnoremap ; :
 
 "==========================================
@@ -272,7 +265,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'godlygeek/tabular' "必要插件，安装在vim-markdown前面
 Plug 'plasticboy/vim-markdown'
 Plug 'mzlogin/vim-markdown-toc'
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 'markdown'}
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 " Undo Tree
 Plug 'mbbill/undotree/'
@@ -284,13 +277,13 @@ call plug#end()
 "==========================================
 " Color & Themey 颜色和主题设置
 "==========================================
- if has('gui')
-    set lines=40 columns=100 linespace=0
-    set guioptions=gmlr
-    if has('win')
-        set guifont=Fira_Code_Medium:h12:W500:cANSI:qDRAFT
-    else
+ if has('gui_running')
+    set lines=40 columns=100
+    set guioptions-=T " Remove the toolbar
+    if LINUX()
         set guifont=Fira\ Code\ Medium\12\500
+    elseif WINDOWS()
+        set guifont=Fira_Code_Medium:h12:W500:cANSI:qDRAFT
     endif
 else 
     set t_Co=256
@@ -303,10 +296,40 @@ colorscheme gruvbox
 "==========================================
 " 插件相关配置设置
 "==========================================
-"
-" markdown插件设置
 
-" coc插件设置
+" mkdp
+let g:mkdp_auto_start = 0
+let g:mkdp_auto_close = 0
+let g:mkdp_refresh_slow = 1
+
+let g:mkdp_markdown_css = ''
+let g:mkdp_highlight_css = ''
+let g:mkdp_preview_options = {
+    \ 'mkit': {},
+    \ 'katex': {},
+    \ 'uml': {},
+    \ 'maid': {},
+    \ 'disable_sync_scroll': 1,
+    \ 'sync_scroll_type': 'middle',
+    \ 'hide_yaml_meta': 0,
+    \ 'sequence_diagrams': {},
+    \ 'flowchart_diagrams': {},
+    \ 'content_editable': v:false,
+    \ 'disable_filename': 0
+    \ }
+
+function g:OpenBrowserInANewWindow(url)
+    if WINDOWS()
+        let chrome_path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+    elseif LINUX()
+        let chrome_path = chrome
+    silent execute 'silent !"' . chrome_path . '" --new-window ' . a:url
+endfunction
+let g:mkdp_browserfunc = 'g:OpenBrowserInANewWindow'
+autocmd FileType markdown nmap <F8> <Plug>MarkdownPreview
+
+
+" coc
 let g:coc_global_extensions = ['coc-json', 'coc-vimlsp']
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
@@ -338,14 +361,14 @@ xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 
-" nerdtree 插件设置
+" nerdtree
 map <C-n> :NERDTreeToggle<CR>
 
-" 自动括号插件设置
+" auto-pair
 au Filetype FILETYPE let b:AutoPairs = {"(": ")"}
 au FileType php      let b:AutoPairs = AutoPairsDefine({'<?' : '?>', '<?php': '?>'})
 
- "youdao translater
+" youdao translater
 vnoremap <silent> <C-T> :<C-u>Ydv<CR>
 nnoremap <silent> <C-T> :<C-u>Ydc<CR>
 noremap <leader>yd :<C-u>Yde<CR>  
