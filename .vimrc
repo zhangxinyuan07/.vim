@@ -251,12 +251,17 @@ iab #d #define
 iab #p #pragma
 
 " Ctrl-l 取消高亮,更新diff,刷新屏幕
-nnoremap <silent> <C-l> :<C-U>nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:Beacon<cr>
+nnoremap <silent> <C-l> :<C-U>nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 
 "==========================================
 " Initial Plugin 加载插件
 "==========================================
 
+if empty(glob('~/.vim/autoload/plug.vim'))
+    :exe '!curl -flo ~/.vim/autoload/plug.vim --create-dirs 
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    au VimEnter * PlugInstall --sync | source $MYVINRC
+endif
 call plug#begin()
 
 Plug 'mhinz/vim-startify'
@@ -304,6 +309,7 @@ endif
 
 set background=dark
 colorscheme gruvbox
+set termguicolors
 
 
 "==========================================
@@ -343,7 +349,7 @@ autocmd FileType markdown nmap <F8> <Plug>MarkdownPreview
 
 
 " coc
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp']
+let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-git', 'coc-clangd']
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
