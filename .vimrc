@@ -246,10 +246,6 @@ nnoremap <leader>p "*p
 
 cmap w!! w !sudo tee % > /dev/null <CR>
 
-iab #i #include
-iab #d #define
-iab #p #pragma
-
 " Ctrl-l 取消高亮,更新diff,刷新屏幕
 nnoremap <silent> <C-l> :<C-U>nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 
@@ -271,6 +267,7 @@ Plug 'morhetz/gruvbox'
 Plug 'gcmt/wildfire.vim'
 Plug 'tpope/vim-surround'
 Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'       " 显示 NERDTree 目录树的 Git 状态信息 
 Plug 'mg979/vim-visual-multi'
 " Taglist
 Plug 'majutsushi/tagbar', { 'on': 'TagbarOpenAutoClose' }
@@ -291,6 +288,17 @@ Plug 'mbbill/undotree/'
 " 有道翻译
 Plug 'ianva/vim-youdao-translater'
 
+" Github
+Plug 'airblade/vim-gitgutter'            " Git 侧边栏插件
+Plug 'tpope/vim-fugitive'                " 在 Vim 中使用 Git 命令
+
+" Search
+" Plug 'Yggdroot/LeaderF'                " 内容、文件、缓冲区和标签模糊搜索插件，替代 Ctrlp
+Plug 'ctrlpvim/ctrlp.vim'                " 内容、文件、缓冲区和标签模糊搜索插件
+Plug 'majutsushi/tagbar'                 " 侧边栏显示文件中定义的常量、变量、函数等，善于 Shift + ? 查看帮助
+Plug 'easymotion/vim-easymotion'         " 快速定位
+
+
 call plug#end()
 "==========================================
 " Color & Themey 颜色和主题设置
@@ -307,9 +315,9 @@ else
     set t_Co=256
 endif
 
+set termguicolors
 set background=dark
 colorscheme gruvbox
-set termguicolors
 
 
 "==========================================
@@ -345,17 +353,26 @@ endfunction
 if WINDOWS()
     let g:mkdp_browserfunc = 'g:OpenBrowserInANewWindow'
 endif
-autocmd FileType markdown nmap <F8> <Plug>MarkdownPreview
+nnoremap <silent><F8> <Plug>MarkdownPreview
+autocmd FileType markdown nmap <silent><F8> <Plug>MarkdownPreviewTroggle  " 普通模式打开或关闭 Markdown 预览
+autocmd FileType markdown imap <silent><F8> <Plug>MarkdownPreviewTroggle  " 插入模式打开或关闭 Markdown 预览
 
 
 " coc
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-git', 'coc-clangd']
+let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-git', 'coc-clangd',
+            \ 'coc-tsserver', 'coc-css', 'coc-cmake', 'coc-highlight', 'coc-pyright']
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
 inoremap <silent><expr> <C-p> coc#refresh()
+
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -381,7 +398,24 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 
 " nerdtree
-map <C-n> :NERDTreeToggle<CR>
+" 插件 NERDTree 按键映射，NERDTree激活后，善用 Shift + ? 快速调出帮助文档
+nnoremap <Leader>n :NERDTreeToggle<CR>          " 打开/关闭目录树
+" nnoremap <Leader>n :NERDTreeFocus<CR>         " 打开目录树，同 NERDTree
+" nnoremap <Leader>N :NERDTreeClose<CR>         " 关闭目录树
+nnoremap <Leader>f :NERDTreeFind<CR>            " 打开目录树并定位到当前文件
+
+let NERDTreeShowHidden=0                        " 是否显示隐藏文件 0/1
+let NERDTreeShowLineNumbers=1                   " 显示目录树行号
+" autocmd vimenter * NERDTree                   " 自动开启 Nerdtree
+" let g:NERDTreeWinSize = 25                    " 设定 NERDTree 视窗大小
+let NERDTreeShowBookmarks=1                     " 开启 Nerdtree 时自动显示 Bookmarks
+" 隐藏指定文件和文件夹
+let NERDTreeIgnore = ['\.pyc$', '\.swp', '\.swo', '\.vscode', '__pycache__']
+" 打开 Vim 时如果没有文件自动打开 NERDTree
+" autocmd vimenter * if !argc()|NERDTree|endif
+" 当 NERDTree 为剩下的唯一窗口时自动关闭
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endi
+
 
 " auto-pair
 au Filetype FILETYPE let b:AutoPairs = {"(": ")"}
@@ -392,6 +426,27 @@ vnoremap <silent> <C-T> :<C-u>Ydv<CR>
 nnoremap <silent> <C-T> :<C-u>Ydc<CR>
 noremap <leader>yd :<C-u>Yde<CR>  
 
+" 插件 Tarbar 按键映射，要善于使用 Shift + ? 查看帮助
+nnoremap <Leader>t :TagbarToggle<CR>
+
+" 插件 Undotree 按键映射，要善于使用 Shift + ? 查看帮助
+nnoremap <Leader>u :UndotreeToggle<CR>
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 插件 NERDTree-git 自定义配置
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔",
+    \ "Unknown"   : "?"
+    \ }
+" ===============================================================================
+" }}}
 
